@@ -1,0 +1,58 @@
+    文件夹位置：
+	\Freescale\SDK_2.0_MK60DN512xxx10\boards\twrk60d100m\user_projects\smartcar\......
+	
+	已经做好驱动：
+    test_led();
+    test_key();
+    test_delay();
+    test_pit();
+    test_adc();
+    test_uart5();
+    test_pwm();
+    test_e2prom();
+    test_oled();
+    test_camera();// 80*60扩张成128*60 如果 按下S2键 绿灯亮 OLED 显示赛道 原始数据 最后 4行个填入0
+    test_mpu6050();
+    test_mpu_dmp();//MPU6050 转换成姿态输出 采用DMP库 四元数转换成姿态角 pitch俯仰角 roll翻滚角
+    test_speed(); //脉冲宽度 us单位
+    test_speed_quad();//定时间内 脉冲计数
+    test_nrf24l01();// ST开发板 使用命令： rf1start()   rf1send("123345")
+    test_ccd0();//按键S2 OLED 显示赛道
+    test_hc_sr04();//LED4 闪烁变亮距离长 变暗距离短 串口打印输出距离
+
+	
+	
+
+	
+	板使用注意，否则lock cpu
+	1. 下载程序时不要复位 （红色按键 ），不可带电插拔任何器件，包括串口线，下载线
+	2. 电源使用注意：上电前测量电压,5V电压，不能过低（小于4.5V）
+	3. 串口输出，不要过于频繁，否则影响速度，并造成lock cpu.
+	4. NMI --S3按键 为不可屏蔽中断， 不要对 S3 编程。用于中断系统。
+        
+PIT0 - steer舵机输出定时 直立车不用
+PIT1 - 空
+PIT2 - 定時測速 1ms
+PIT3 - 超聲波
+
+2017.7.9 
+开始写直立车程序
+1. 定時中斷中無法读取I2C总线数据，调整结构，不能在定时中断中写程序。中断中标志位修改。
+2. PIT0 定时 ms
+3. 测试传感器 CCD 角度 
+
+2017.7.11
+1. 整理程序中断 去除几乎所有的中断，修改为查询操作。
+2. 测速度中断 PIT2 去除， 在PIT0 的1ms中断中查询 计数脉冲。
+原因： PIT2中断产生时，如果此时有PIT0中断还没有出来，则 要等待PIT0中断完成后再进入，
+此时脉冲计数定时 时间已经超过，则计数（测速度）不准确。
+3. speed_quad.c 初始化中去除 PIT2 定时器 开启。 
+4. speed_quad.c 中添加函数 
+void speed_quad_get(uint32_t *speed1, uint32_t *speed2);
+5. control.c 中PIT0 中断函数中添加 speed_quad_get 调用 。
+6. 第0、1、2、3秒中 ，如果不进行CCD的曝光和采集，则进行angle_get(), 随时更新Kalman的参数。
+        
+        
+	
+	
+	
