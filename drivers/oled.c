@@ -801,4 +801,173 @@ void OLED_Fill(uint8_t uPage_sta,uint8_t uColumn_sta,uint8_t uColumn_end,uint8_t
 
 
 
+/*******************************************************************************
+* Function Name  : OledImge_Extend
+* Description    : 字节扩张，1字节8位，以位显示 
+* Input          : data-转换前的数据  xSize-一行多少个数据 ySize-共多少行8的倍数
+* Output         : buf-转换后的数据
+* Return         : None
+*******************************************************************************/
+void OledImge_Extend(uint8_t *buf,uint8_t *data, int xSize, int ySize)  
+{
+  uint8_t colour[2]={0xff,0x00};
+  uint8_t t;
+  int x,y;
+  data++;
+    for(y = 0; y < ySize; y++)
+    {
+      for(x = 1; x < (xSize/8)+1; x++)  
+      {
+        t=*data++;
+        *buf++=colour[(t>>7)&0x01];
+        *buf++=colour[(t>>6)&0x01];
+        *buf++=colour[(t>>5)&0x01]; 
+        *buf++=colour[(t>>4)&0x01]; 
+        *buf++=colour[(t>>3)&0x01];
+        *buf++=colour[(t>>2)&0x01];
+        *buf++=colour[(t>>1)&0x01];
+        *buf++=colour[(t>>0)&0x01];
+      }
+    }
+}
+
+/*******************************************************************************
+* Function Name  : oled_data120160_convert
+* Description    : 图像先转换成 120*160 
+* sizd = 0:   60*80    -->  160*120  -->  120*60 行上每隔3点去年1点， 行数缩一半
+* sizd = 1:   120*160  -->  120*60 行上每隔3点去年1点， 行数缩一半
+* sizd = 2:   180*240  -->  120*60 行上每隔2点去年1点，行数缩为1/3
+* Input          : dataorigin-原来数据 
+* Output         : buf-转换后数据
+* Return         : None
+*******************************************************************************/
+bool oled_data120160_convert (uint8_t* buf, uint8_t* dataorigin, uint8_t size)
+{
+  uint32_t i,j;
+  bool result = false;
+  uint8_t data120160[120][160];
+  uint8_t data8060[60][80];
+
+          if(size == 0)    //图像60*80扩张为120*160
+          {       
+              for(i=0; i<120; i++)
+              {
+                    for(j=0; j<160; j++) {  data120160[i][j] = *(dataorigin+(i/2)*80+(j/2));}
+              }
+              result = true;
+          }  
+          else if(size == 1)    //图像120*160
+          {                    
+              for(i=0; i<120; i++)
+              {
+                    for(j=0; j<160; j++){   data120160[i][j] = *(dataorigin+i*160+j);   }
+              }  
+              result = true;
+          } 
+          else if(size == 2)    //图像180*240先压缩为60*80再扩张为120*160
+          {
+              for(i=0; i<60; i++)
+              {
+                    for(j=0; j<80; j++)   {   data8060[i][j] = *(dataorigin+(i*3)*80+(j*3)) ; }
+              }             
+                    
+              for(i=0; i<120; i++)
+              {
+                    for(j=0; j<160; j++)    {   data120160[i][j] = data8060[i/2][j/2] ; }
+              }  
+              result = true;
+          }  
+  
+  for(i=0; i<120; i++)
+  {
+        for(j=0; j<160; j++) {  *buf = data120160[i][j]; buf++; }
+  }  
+  
+  return result;
+}
+
+
+
+/*******************************************************************************
+* Function Name  : oled_display_image
+* Description    : 图像 120*160 换成 128*64 最后4行填0
+* Input          : dataorigin-原来数据 
+* Output         : buf-转换后数据
+* Return         : None
+*******************************************************************************/
+bool oled_data120160_data12864_convert (uint8_t* buf, uint8_t* dataorigin)
+{
+  uint32_t i,j,m,n;
+  uint8_t data[64][128] = {0U}; //最大图像
+
+      m = 0;
+      n = 0;
+      
+      for(i=0; i<120; i++)
+      {
+        if(0 == i%2) //只显示偶数行
+        {
+          for(j=0; j<160; j++) //每行中 每5个点去掉1个点 160-->128
+          {  
+            if(4 != j%5)
+            {
+              data[m][n] = *( dataorigin + (i*160+ j)); 
+              n++;
+            }
+          }
+          m++; n = 0;
+        }
+      } 
+      
+      for(i=0; i<60; i++)
+      {
+            for(j=0; j<128; j++) {  *buf = data[i][j] ; buf++;};
+      } 
+      for(i=60; i<64; i++) //最后4行 为 白
+      {
+            for(j=0; j<128; j++) {  *buf = 0xFF ; buf++;};
+      }
+      
+    return true;
+}
+
+/*******************************************************************************
+* Function Name  : oled_display_image
+* Description    : 显示路径一帧图像  datalenght-数据点数 width-一行多少点 height-共多少行
+*   例如: 80*64 图像   datalenght-80*64 width-80 height-64        
+*         128*64 图像   datalenght-128*64  width-128 height-64  
+          height-64   一定为8的倍数，不能超过64
+* Input          : None
+* Output         : None
+* Return         : None
+*******************************************************************************/
+void oled_display_image (uint8_t* data, uint16_t datalenght, uint16_t width, uint16_t heigth)
+{
+  uint16_t page, seg;
+  uint16_t col = 0;
+  uint8_t data_buf[128*8] = {0x00};
+  
+  uint16_t i,bit_pos;
+
+  for (i = 0; i<datalenght; i++)
+  {
+    seg = i % width;                      //段偏移
+    page = i/(width*8);                 //页偏移
+    bit_pos = 8- (i / width) %(8*page);        //位偏移
+       
+    if(0x00 == *data)
+      data_buf[col+seg] &= ~(1<<(8-bit_pos));//置0
+    else if(0xff == *data) //白色
+      data_buf[col+seg] |= 1<<(8-bit_pos);//置1
+    
+    if((heigth*(width/8)-1) == (i%(heigth*(width/8))))//传完 heigth*(width/8) 个点
+    {
+      col = col+128;
+    }
+    data++;
+  }
+   IIC_oled_Buffer_Write(data_buf, 1024, 1);
+}
+
+
 

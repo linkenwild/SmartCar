@@ -165,13 +165,13 @@ void speed2_quad_init(void)
     
     /* Setup Quad Decode on a FTM channel  */
     /*kFTM_QuadPhaseEncode:相 A 和相 B 编码模式  kFTM_QuadCountAndDir:计数和方向编码模式*/
-    FTM_SetupQuadDecode(SPEED2_FTM_BASEADDR, &phaseParam, &phaseParam, kFTM_QuadCountAndDir);
+    FTM_SetupQuadDecode(SPEED2_FTM_BASEADDR, &phaseParam, &phaseParam, kFTM_QuadPhaseEncode);
 
     /*啟動測速*/
     FTM_StartTimer(SPEED2_FTM_BASEADDR, kFTM_SystemClock);
 
     /*定时器2定时 TEST_TIME */
-    //PitConfig(kPIT_Chnl_2, TEST_TIME);
+    PitConfig(kPIT_Chnl_2, TEST_TIME);
 }
 
 /*******************************************************************************

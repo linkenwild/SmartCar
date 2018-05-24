@@ -12,33 +12,6 @@ History:
 #include "fsl_debug_console.h"
 #include <MK60D10.h>
 
-#include "led.h"
-#include "key.h"
-#include "delay.h"
-#include "pit.h"
-#include "pdb.h"
-#include "adc0.h"
-#include "adc1.h"
-#include "usart.h"
-#include "pwm.h"
-#include "i2c_ee.h"
-#include "oled.h"
-#include "mpu6050.h"
-#include "angle.h"
-#include "inv_mpu.h"
-#include "inv_mpu_dmp_motion_driver.h" 
-#include "speed.h"
-#include "speed_quad.h"
-#include "ccd0.h"
-#include "ccd1.h"
-#include "nrf24l01.h"
-#include "ov7725.h"
-#include "hc_sr04.h"
-#include "ov7725.h"
-#include "imu.h"
-
-#include "stdio.h"
-
 /*******************************************************************************
  * Definitions
  ******************************************************************************/
@@ -52,10 +25,9 @@ History:
  */
 
 //测试程序
-#include "test.c"
+#include "test.h"
 //运行程序
 #include "CarSub.h"
-#include "control.c"
 
 /*!
  * @brief Main function
@@ -104,7 +76,7 @@ int main(void)
 //  test_speed(); //脉冲宽度 us单位
 //  test_speed_quad();//定时间内 脉冲计数
 //  test_nrf24l01();// ST开发板 使用命令： rf1start()   rf1send("123345")
- // test_ccd();//按键S2 OLED 显示赛道
+//  test_ccd();//按键S2 OLED 显示赛道
 //  test_hc_sr04();//LED4 闪烁变亮距离长 变暗距离短 串口打印输出距离
     
 }

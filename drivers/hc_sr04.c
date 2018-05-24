@@ -170,7 +170,8 @@ void PORTD_IRQHandler(void)
           }
           else if( 0 == (GPIO_ReadPinInput(ECHO_GPIO, ECHO_GPIO_PIN))) //ÏÂ½µÑØ
           {
-                capture1Val =(1000- COUNT_TO_USEC(PIT_GetCurrentTimerCount(PIT, kPIT_Chnl_1),CLOCK_GetFreq(kCLOCK_BusClk))) + 1000*pit1times; //us
+                capture1Val =(1000- COUNT_TO_USEC(PIT_GetCurrentTimerCount(PIT, kPIT_Chnl_3),CLOCK_GetFreq(kCLOCK_BusClk))) + 1000*pit1times; //us
+                if(capture1Val>100000) capture1Val = 0;
                 pit3stop();
                 echo_state = 0;
                 LEDOff(LED4);
@@ -227,7 +228,7 @@ void hc_sc04_init(void)
 uint32_t ultrasonic_width_get(void)
 {	
   uint32_t distance;
-  distance = capture1Val * 170 / 100;
+  distance = capture1Val*17;
   
   return distance;
 }

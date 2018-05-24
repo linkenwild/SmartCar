@@ -209,7 +209,7 @@ void getadc0_poll_value(uint8_t *advalue)
         }
         
           *advalue = CCD_ADC16_BASE->R[0];
-          PRINTF("ADC0 Value: %d\r\n", g_Adc16ConversionValue);
+          //PRINTF("ADC0 Value: %d\r\n", g_Adc16ConversionValue);
           //PRINTF("ADC0 Interrupt Count: %d\r\n", g_Adc16InterruptCounter);
         
 }

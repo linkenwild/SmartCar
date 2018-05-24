@@ -2089,6 +2089,9 @@
     <file>
       <name>$PROJ_DIR$\..\project.c</name>
     </file>
+    <file>
+      <name>$PROJ_DIR$\..\test.c</name>
+    </file>
   </group>
   <group>
     <name>startup</name>
@@ -2108,61 +2111,28 @@
       <name>$PROJ_DIR$\..\..\drivers\adc0.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\drivers\adc0.h</name>
-    </file>
-    <file>
       <name>$PROJ_DIR$\..\..\drivers\adc1.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\drivers\adc1.h</name>
     </file>
     <file>
       <name>$PROJ_DIR$\..\..\drivers\angle.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\drivers\angle.h</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\drivers\camera_oled.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\drivers\camera_oled.h</name>
-    </file>
-    <file>
       <name>$PROJ_DIR$\..\..\drivers\ccd0.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\drivers\ccd0.h</name>
     </file>
     <file>
       <name>$PROJ_DIR$\..\..\drivers\ccd1.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\drivers\ccd1.h</name>
-    </file>
-    <file>
       <name>$PROJ_DIR$\..\..\drivers\delay.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\drivers\delay.h</name>
     </file>
     <file>
       <name>$PROJ_DIR$\..\..\drivers\hc_sr04.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\drivers\hc_sr04.h</name>
-    </file>
-    <file>
       <name>$PROJ_DIR$\..\..\drivers\i2c.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\drivers\i2c.h</name>
-    </file>
-    <file>
       <name>$PROJ_DIR$\..\..\drivers\i2c_ee.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\drivers\i2c_ee.h</name>
     </file>
     <file>
       <name>$PROJ_DIR$\..\..\drivers\imu.c</name>
@@ -2180,73 +2150,37 @@
       <name>$PROJ_DIR$\..\..\drivers\Kalman_filter.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\drivers\Kalman_filter.h</name>
-    </file>
-    <file>
       <name>$PROJ_DIR$\..\..\drivers\key.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\drivers\key.h</name>
     </file>
     <file>
       <name>$PROJ_DIR$\..\..\drivers\led.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\drivers\led.h</name>
-    </file>
-    <file>
       <name>$PROJ_DIR$\..\..\drivers\mpu6050.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\drivers\mpu6050.h</name>
     </file>
     <file>
       <name>$PROJ_DIR$\..\..\drivers\nrf24l01.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\drivers\nrf24l01.h</name>
-    </file>
-    <file>
       <name>$PROJ_DIR$\..\..\drivers\oled.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\drivers\oled.h</name>
     </file>
     <file>
       <name>$PROJ_DIR$\..\..\drivers\ov7725.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\drivers\ov7725.h</name>
-    </file>
-    <file>
       <name>$PROJ_DIR$\..\..\drivers\pit.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\drivers\pit.h</name>
     </file>
     <file>
       <name>$PROJ_DIR$\..\..\drivers\pwm.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\drivers\pwm.h</name>
-    </file>
-    <file>
       <name>$PROJ_DIR$\..\..\drivers\speed.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\drivers\speed.h</name>
     </file>
     <file>
       <name>$PROJ_DIR$\..\..\drivers\speed_quad.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\drivers\speed_quad.h</name>
-    </file>
-    <file>
       <name>$PROJ_DIR$\..\..\drivers\usart.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\drivers\usart.h</name>
     </file>
   </group>
   <group>

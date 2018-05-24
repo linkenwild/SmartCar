@@ -1,5 +1,40 @@
+#include "clock_config.h"
+#include "board.h"
+#include "fsl_debug_console.h"
+#include <MK60D10.h>
 
-static void delay(void)
+#include "led.h"
+#include "key.h"
+#include "delay.h"
+#include "pit.h"
+#include "pdb.h"
+#include "adc0.h"
+#include "adc1.h"
+#include "usart.h"
+#include "pwm.h"
+#include "i2c_ee.h"
+#include "oled.h"
+#include "mpu6050.h"
+#include "angle.h"
+#include "inv_mpu.h"
+#include "inv_mpu_dmp_motion_driver.h" 
+#include "speed.h"
+#include "speed_quad.h"
+#include "ccd0.h"
+#include "ccd1.h"
+#include "nrf24l01.h"
+#include "ov7725.h"
+#include "hc_sr04.h"
+#include "ov7725.h"
+#include "imu.h"
+
+#include "stdio.h"
+#include "stdint.h"
+#include "test.h"
+
+
+
+void delay(void)
 {
     volatile uint32_t i = 0;
     for (i = 0; i < 800000; ++i)
@@ -7,7 +42,7 @@ static void delay(void)
         __asm("NOP"); /* delay */
     }
 }
-static void delay_short(uint32_t num)
+void delay_short(uint32_t num)
 {
     volatile uint32_t i = 0;
     for (i = 0; i < num; ++i)
@@ -17,7 +52,7 @@ static void delay_short(uint32_t num)
 }
 
 //测试LED beep ultrasonic
-static void test_led(void)
+void test_led(void)
 {
     LED_Init();
     //BEEP_Init();
@@ -41,7 +76,7 @@ static void test_led(void)
     }
 }
 //测试按键
-static void test_key(void)
+void test_key(void)
 {
     Key_init();
     Jumper_Init();
@@ -56,15 +91,16 @@ static void test_key(void)
     }
 }
 //测试延时systick
-static void test_delay(void)
+void test_delay(void)
 {
     LED_Init();
     PRINTF("测试 延时systick !!!\r\n ");
     while (1)
     {
 //        delay_ms(1000);
-        delay_us(500000);
-//        Delay(8000000);
+//        delay_us(500000);
+//        Delay(8000000); //与下一句比较时间短一些
+        delay_short(8000000);  //与上一句比较时间长一些
         LEDTog(LED1);
         LEDTog(LED2);
         LEDTog(LED3);
@@ -73,7 +109,7 @@ static void test_delay(void)
 }
 
 //测试定时器1 配置LED1每隔半秒闪一次
-static void test_pit(void)
+void test_pit(void)
 {
     LED_Init();
 
@@ -88,7 +124,7 @@ static void test_pit(void)
 
 
 //测试ADC 
-static void test_adc(void)
+void test_adc(void)
 {
     uint8_t   advalue;
 
@@ -105,7 +141,7 @@ static void test_adc(void)
     }
 }
 //测试uart
-static void test_uart(void)
+void test_uart(void)
 {
     //BEEP_Init();
     UartConfig();
@@ -117,7 +153,7 @@ static void test_uart(void)
     }
 }
 //测试pwm 舵机使用PIT0
-static void test_pwm(void)
+void test_pwm(void)
 {
     int i = 20, dir = 0;
     PWM_Init(PWM1);
@@ -154,7 +190,7 @@ static void test_pwm(void)
     }
 }
 //测试 OLED i2c0 addr:0x3C
-static void test_oled(void)
+void test_oled(void)
 {
   uint8_t i;
   LED_Init();
@@ -166,7 +202,7 @@ static void test_oled(void)
 
     while(1)
     {      
-        delay();
+        delay();delay();delay();
         LEDTog(LED1);
         fill_picture(i++);
     }
@@ -174,7 +210,7 @@ static void test_oled(void)
 
 
 //测试 camera
-static void test_camera(void)
+void test_camera(void)
 {
   LED_Init();
   Key_init();
@@ -188,7 +224,7 @@ static void test_camera(void)
 }
 
 //测试 e2prom i2c0 addr:0x50
-static void test_e2prom(void)
+void test_e2prom(void)
 {
   
   i2c_ee_init();
@@ -200,7 +236,7 @@ static void test_e2prom(void)
   }
 }
 //测试 mpu6050 i2c0 addr:0x68
-static void test_mpu6050(void)
+void test_mpu6050(void)
 {
   LED_Init();
   PRINTF("测试 MPU6050!\r\n ");
@@ -214,7 +250,7 @@ static void test_mpu6050(void)
 }
 
 //测试 mpu6050 求角度 用卡尔曼滤波 精确计时
-static void test_mpu6050_angle(void)
+void test_mpu6050_angle(void)
 {
   char str[64];
   float angle_temp[3]; //由加速度计算的倾斜角度
@@ -239,7 +275,7 @@ static void test_mpu6050_angle(void)
 }
 
 //测试 mpu6050 dmp addr:0x68
-static void test_mpu_dmp(void)
+void test_mpu_dmp(void)
 {
   float Pitch;
   short gyro_y, accel_y;
@@ -269,7 +305,7 @@ static void test_mpu_dmp(void)
 }
 
 //测试 mpu6050 dmp addr:0x68
-static void test_mpu_imu()
+void test_mpu_imu()
 {
   float pitch_roll_value[2];
   char str[64];
@@ -287,7 +323,7 @@ static void test_mpu_imu()
 }
 
 //测试 speed 得到脉冲宽度 us单位
-static void test_speed(void)
+void test_speed(void)
 {
   PRINTF("测试 speed!\r\n ");
   LED_Init();
@@ -304,20 +340,25 @@ static void test_speed(void)
 }
 
 //测试 speed 得到脉冲計數
-static void test_speed_quad(void)
+void test_speed_quad(void)
 {
   char str[64];
   PRINTF("测试 speed_quad!\r\n ");
   LED_Init();
+  i2c_oled_init(); 
+  delay();delay();delay();
+  fill_picture(0x00);
   speed1_quad_init();
   speed2_quad_init();
  
     while(1)
     {      
-        sprintf(str, "%d ", speed1_quad_get());
+        sprintf(str, "%d   ", speed1_quad_get());
         PRINTF("测试 speed1 計數 = %s   ",str);
-        sprintf(str, "%d ", speed2_quad_get());
+        OLED_ShowString(1, 20, 8, str);
+        sprintf(str, "%d   ", speed2_quad_get());
         PRINTF("测试 speed2 計數 = %s\r\n ",str);
+        OLED_ShowString(4, 20, 8, str);
         delay();
         LEDTog(LED1);
     }
@@ -325,7 +366,7 @@ static void test_speed_quad(void)
 
 
 //测试 ccd 使用adc0
-static void test_ccd(void)
+void test_ccd(void)
 {
   uint8_t  pixel_pt0[129]={0x00}; //0-127有效，128点无效
   uint8_t  pixel_pt1[129]={0x00}; //0-127有效，128点无效
@@ -336,18 +377,20 @@ static void test_ccd(void)
   Jumper_Init();
   i2c_oled_init();  
   ccd0_init();
-  ccd1_init();
+  //ccd1_init();
   while(1)
   {      
       LEDTog(LED1);
       threshold0 = ImageCapture(pixel_pt0);//一轮11ms
-      threshold1 = ccd1_ImageCapture(pixel_pt1);//一轮11ms
+      //hreshold1 = ccd1_ImageCapture(pixel_pt1);//一轮11ms
        
       if( 0x00 == GPIO_ReadPinInput(GPIOE, 11U)) //第3个灯亮
       {
+        //串口发送数据
         //SendImageData(pixel_pt0);
         //SendImageData(pixel_pt1);
-        //同时显示2路CCD数据
+        
+        //OLED显示2路CCD数据
         oled_display_ccd_line (pixel_pt0, threshold0, pixel_pt1, threshold1);
       }
     
@@ -355,7 +398,7 @@ static void test_ccd(void)
 }
 
 //测试 nrf24l01 
-static void test_nrf24l01(void)
+void test_nrf24l01(void)
 {
   PRINTF("测试 nrf24l01!\r\n ");
   rf1start();
@@ -364,12 +407,18 @@ static void test_nrf24l01(void)
 //测试 hc_sr04 
 void test_hc_sr04(void)
 {
+  char str[256];
   PRINTF("测试 hc_sr04!\r\n ");
   LED_Init();
+  i2c_oled_init(); 
+  delay();delay();delay();
+  fill_picture(0x00);
   hc_sc04_init();
   while(1)
   {      
       delay();delay();delay();
-      PRINTF("ultrasonic_width = %d mm  \r\n ", ultrasonic_width_get());//串口打印出距离
+      PRINTF("ultrasonic_width = %d.%d cm  \r\n ", ultrasonic_width_get()/1000,ultrasonic_width_get()%1000);//串口打印出距离
+      sprintf(str, "len=%d.%d cm  ", ultrasonic_width_get()/1000,ultrasonic_width_get()%1000);
+      OLED_ShowString(2, 0, 8, str);
   }
 }

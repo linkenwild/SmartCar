@@ -14,4 +14,9 @@ void OLED_Fill(uint8_t uPage_sta,uint8_t uColumn_sta,uint8_t uColumn_end,uint8_t
 
 void oled_display_ccd_image (uint8_t* data, float threshold, uint16_t datalenght,  uint16_t startline,  uint16_t heigth);
 void oled_display_ccd_line (uint8_t* data0, float threshold0, uint8_t* data1, float threshold1);
+
+void OledImge_Extend(uint8_t *buf,uint8_t *data, int xSize, int ySize) ;
+void oled_display_image (uint8_t* data, uint16_t datalenght, uint16_t width, uint16_t heigth);
+bool oled_data120160_convert (uint8_t* buf, uint8_t* dataorigin, uint8_t size);
+bool oled_data120160_data12864_convert (uint8_t* buf, uint8_t* dataorigin);
 #endif

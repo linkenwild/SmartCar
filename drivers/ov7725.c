@@ -35,7 +35,6 @@ History:
 #include "fsl_gpio.h"
 #include "board.h"
 #include "fsl_debug_console.h"
-#include "camera_oled.h"
 
 #include "ov7725.h"
 #include "i2c.h"
@@ -700,8 +699,8 @@ void PORTA_IRQHandler(void)
               /*如果 按下S2键 绿灯亮 OLED 显示赛道 原始数据 最后 4行个填入0 */
               if( 0x00 == GPIO_ReadPinInput(GPIOE, 11U)) //第3个灯亮
               {
-                SerialDispImage(OV7620_W, OV7620_H, gpHREF);
-                //show_image();
+                //SerialDispImage(OV7620_W, OV7620_H, gpHREF);
+                show_image();
               }
               status = NEXT_FRAME;
               break;
@@ -768,8 +767,8 @@ static int SCCB_Init(uint32_t I2C_MAP)
     {
         gpHREF[i] = (uint8_t*)&gCCD_RAM[i*(OV7620_W/8)];
     }
-    //camera_i2c_oled_init();
-    //ra_fill_picture(0xFF);
+    i2c_oled_init();
+    fill_picture(0xFF);
     
     /*OV7725管脚初始化*/
     camera_pin_init();
