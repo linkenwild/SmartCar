@@ -1973,7 +1973,7 @@
       <name>$PROJ_DIR$\..\readme.txt</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\&#x8BF4;&#x660e; .txt</name>
+      <name>$PROJ_DIR$\..\..\documents\&#x8BF4;&#x660e; .txt</name>
     </file>
   </group>
   <group>
@@ -2109,18 +2109,33 @@
     <name>user_drivers</name>
     <file>
       <name>$PROJ_DIR$\..\..\drivers\adc0.c</name>
+      <excluded>
+        <configuration>Debug</configuration>
+      </excluded>
     </file>
     <file>
       <name>$PROJ_DIR$\..\..\drivers\adc1.c</name>
+      <excluded>
+        <configuration>Debug</configuration>
+      </excluded>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\drivers\adc_pdb.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\..\..\drivers\angle.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\..\..\drivers\ccd0.c</name>
+      <excluded>
+        <configuration>Debug</configuration>
+      </excluded>
     </file>
     <file>
       <name>$PROJ_DIR$\..\..\drivers\ccd1.c</name>
+      <excluded>
+        <configuration>Debug</configuration>
+      </excluded>
     </file>
     <file>
       <name>$PROJ_DIR$\..\..\drivers\delay.c</name>

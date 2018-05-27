@@ -20,6 +20,10 @@ void test_pit(void);
 //测试ADC 
 void test_adc(void);
 
+//测试ADC AIN4, AIN5, DMA连续测量
+void test_ain(void);
+
+
 //测试uart
 void test_uart(void);
 

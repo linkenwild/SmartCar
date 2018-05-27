@@ -27,6 +27,7 @@
 #include "hc_sr04.h"
 #include "ov7725.h"
 #include "imu.h"
+#include "adc_pdb.h"
 
 #include "stdio.h"
 #include "stdint.h"
@@ -140,6 +141,49 @@ void test_adc(void)
        getadc1value(&advalue);
     }
 }
+
+//测试AIN4, 5
+void test_ain(void)
+{
+    uint32_t   ad0value[4];
+    uint32_t   ad1value[4];
+    char str[256];
+
+    PRINTF("测试 PDB ADC DMA!!!\r\n ");
+  Key_init();
+  i2c_oled_init();   
+  i2c_oled_init();  
+  
+    PDB_init();
+    AIN0_init();
+    AIN1_init();
+    PitConfig(kPIT_Chnl_1, 100);//100us
+
+    OLED_Clear(0);
+    while(1)
+    {
+      delay_ms(200);
+      get_pdb_adc0_value(ad0value);
+      get_pdb_adc1_value(ad1value);
+      PRINTF("\r\n");
+      if( 0x00 == GPIO_ReadPinInput(GPIOE, 11U)) //第3个灯亮        
+      {
+        for(int i=0; i<4; i++)
+        {
+          sprintf(str, "%d %d %d %d ", ad0value[0], ad0value[1], ad1value[0], ad1value[1]);
+          OLED_ShowString(0,0,8,str);
+          
+          sprintf(str, "%d %d %d %d ", ad0value[2], ad0value[3], ad1value[2], ad1value[3]);
+          OLED_ShowString(4,0,8,str);
+          
+        }
+        
+      }
+      
+    }
+}
+
+
 //测试uart
 void test_uart(void)
 {
@@ -160,13 +204,13 @@ void test_pwm(void)
     PWM_Init(PWM2);
     PWM_Init(PWM3);
     PWM_Init(PWM4);
-    //PWM_Init(STEERPWM);
+    PWM_Init(STEERPWM);
     
     PWMSet(PWM1, 20 );
     PWMSet(PWM2, 20 );
     PWMSet(PWM3, 20 );
     PWMSet(PWM4, 20 );
-    //PWMSet(STEERPWM, 50 );
+    PWMSet(STEERPWM, 50 );
     PRINTF("测试 pwm 输出电机 舵机使用PIT0!\r\n ");
     while(1)
     {      
@@ -177,6 +221,7 @@ void test_pwm(void)
             PWMSet(PWM2, i++ );
             PWMSet(PWM3, i++ );
             PWMSet(PWM4, i++ );
+            PWMSet(STEERPWM, i );
         }
         else
         {
@@ -184,6 +229,7 @@ void test_pwm(void)
             PWMSet(PWM2, i-- );
             PWMSet(PWM3, i-- );
             PWMSet(PWM4, i-- );
+            PWMSet(STEERPWM, i );
         }
         if(i>80) dir= 1;
         if(i<20) dir = 0;
@@ -325,10 +371,13 @@ void test_mpu_imu()
 //测试 speed 得到脉冲宽度 us单位
 void test_speed(void)
 {
+  char str[64];
   PRINTF("测试 speed!\r\n ");
   LED_Init();
+  i2c_oled_init(); 
   speed1_init();
   speed2_init();
+  OLED_Clear(0);
  
     while(1)
     {      
@@ -347,9 +396,9 @@ void test_speed_quad(void)
   LED_Init();
   i2c_oled_init(); 
   delay();delay();delay();
-  fill_picture(0x00);
   speed1_quad_init();
   speed2_quad_init();
+  OLED_Clear(0);
  
     while(1)
     {      
@@ -382,9 +431,9 @@ void test_ccd(void)
   {      
       LEDTog(LED1);
       threshold0 = ImageCapture(pixel_pt0);//一轮11ms
-      //hreshold1 = ccd1_ImageCapture(pixel_pt1);//一轮11ms
+      //hreshold1 = ccd1_ImageCapture(pixel_ptif( 0x00 == GPIO_ReadPinInput(GPIOE, 11U)) //第3个灯亮1);//一轮11ms
        
-      if( 0x00 == GPIO_ReadPinInput(GPIOE, 11U)) //第3个灯亮
+      
       {
         //串口发送数据
         //SendImageData(pixel_pt0);

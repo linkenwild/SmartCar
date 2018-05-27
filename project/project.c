@@ -46,7 +46,6 @@ int main(void)
     PRINTF("  kCLOCK_CoreSysClk  = %d\r\n", CLOCK_GetFreq(kCLOCK_CoreSysClk));
     PRINTF("  kCLOCK_PlatClk  = %d\r\n", CLOCK_GetFreq(kCLOCK_PlatClk));
     PRINTF("  kCLOCK_BusClk  = %d\r\n", CLOCK_GetFreq(kCLOCK_BusClk));
-    PRINTF("  kCLOCK_FastPeriphClk  = %d\r\n", CLOCK_GetFreq(kCLOCK_FastPeriphClk));
     PRINTF("  kCLOCK_PllFllSelClk  = %d\r\n", CLOCK_GetFreq(kCLOCK_PllFllSelClk));
     PRINTF("  kCLOCK_McgFixedFreqClk  = %d\r\n", CLOCK_GetFreq(kCLOCK_McgFixedFreqClk));
     PRINTF("  kCLOCK_McgInternalRefClk  = %d\r\n", CLOCK_GetFreq(kCLOCK_McgInternalRefClk));
@@ -55,12 +54,13 @@ int main(void)
 //    test_key();
 //    test_delay();
 //    test_pit();
-//    test_adc();
+//    test_adc();//单通道，软件触发，中断读数，2个ADC，每个1通道，共2路
+//      test_ain(); //多通道 PDB触发，中断读数，2个ADC，每个4通道，共8路
 //    test_uart();
 //    test_pwm();
 //    test_e2prom();
 //    test_oled();
-    test_camera();// 80*60扩张成128*60 如果 按下S2键 绿灯亮 OLED 显示赛道 原始数据 最后 4行个填入0
+//    test_camera();// 80*60扩张成128*60 如果 按下S2键 绿灯亮 OLED 显示赛道 原始数据 最后 4行个填入0
 //    test_mpu6050();
 //    test_mpu_dmp();
 //    test_mpu6050_angle();
@@ -74,7 +74,7 @@ int main(void)
 
 //  test_mpu_imu();//经测试 漂移太大 弃用
 //  test_speed(); //脉冲宽度 us单位
-//  test_speed_quad();//定时间内 脉冲计数
+  test_speed_quad();//定时间内 脉冲计数
 //  test_nrf24l01();// ST开发板 使用命令： rf1start()   rf1send("123345")
 //  test_ccd();//按键S2 OLED 显示赛道
 //  test_hc_sr04();//LED4 闪烁变亮距离长 变暗距离短 串口打印输出距离
