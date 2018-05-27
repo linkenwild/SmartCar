@@ -21,13 +21,14 @@ History:
 * Output         : None
 * Return         : None
  ******************************************************************************/
-void PIT1_IRQHandler(void)
-{
-  /* Clear interrupt flag.*/
-    PIT_ClearStatusFlags(PIT, kPIT_Chnl_1 , kPIT_TimerFlag);
-    /*这里添加自己的代码*/
-    LEDTog(LED1);
-}
+//void PIT1_IRQHandler(void)
+//{
+//  /* Clear interrupt flag.*/
+//    PIT_ClearStatusFlags(PIT, kPIT_Chnl_1 , kPIT_TimerFlag);
+//    /*这里添加自己的代码*/
+//    LEDTog(LED1);
+//    PDB_DoSoftwareTrigger(PDB0);
+//}
 /*******************************************************************************
 * Function Name  : PIT2_IRQHandler
 * Description    : 定时器2 中断服务函数
