@@ -121,34 +121,34 @@ static uint32_t duty2counter(uint32_t duty_value)
   return counter;
 }
 
-///*******************************************************************************
-//* Function Name  : STEER_FTM_HANDLER
-//* Description    : 定时器0 中断服务函数 
-//*		舵机频率:50Hz, 周期20ms  脉宽1 ms为上限位置，1.5ms为中位,2ms为下限位置 
-//*		计数 20000us 为一个周期 1000为上限位置，1500 为中位, 2000 为下限位置 
-//*		STEER_FTM 配置初始值时，为中值 50
-//* Input          : None
-//* Output         : None
-//* Return         : None
-//*******************************************************************************/
-//void STEER_PIT_HANDLER(void)
-//{
-//  static volatile bool g_highlowflag = true;  
-//  /* Clear interrupt flag.*/
-//    PIT_ClearStatusFlags(PIT, kPIT_Chnl_0, kPIT_TimerFlag);
-//    /*这里添加自己的代码*/
-//    g_highlowflag = !g_highlowflag;
-//    if(true == g_highlowflag)
-//    {
-//      PIT_SetTimerPeriod(PIT, kPIT_Chnl_0, USEC_TO_COUNT(duty2counter(steer_value), CLOCK_GetFreq(kCLOCK_BusClk)));
-//      steerpwmon();
-//    }
-//    else
-//    {
-//      PIT_SetTimerPeriod(PIT, kPIT_Chnl_0, USEC_TO_COUNT((STEERWIDTH-duty2counter(steer_value)),  CLOCK_GetFreq(kCLOCK_BusClk)));
-//      steerpwmoff();
-//    }
-//}
+/*******************************************************************************
+* Function Name  : STEER_FTM_HANDLER
+* Description    : 定时器0 中断服务函数 
+*		舵机频率:50Hz, 周期20ms  脉宽1 ms为上限位置，1.5ms为中位,2ms为下限位置 
+*		计数 20000us 为一个周期 1000为上限位置，1500 为中位, 2000 为下限位置 
+*		STEER_FTM 配置初始值时，为中值 50
+* Input          : None
+* Output         : None
+* Return         : None
+*******************************************************************************/
+void STEER_PIT_HANDLER(void)
+{
+  static volatile bool g_highlowflag = true;  
+  /* Clear interrupt flag.*/
+    PIT_ClearStatusFlags(PIT, kPIT_Chnl_0, kPIT_TimerFlag);
+    /*这里添加自己的代码*/
+    g_highlowflag = !g_highlowflag;
+    if(true == g_highlowflag)
+    {
+      PIT_SetTimerPeriod(PIT, kPIT_Chnl_0, USEC_TO_COUNT(duty2counter(steer_value), CLOCK_GetFreq(kCLOCK_BusClk)));
+      steerpwmon();
+    }
+    else
+    {
+      PIT_SetTimerPeriod(PIT, kPIT_Chnl_0, USEC_TO_COUNT((STEERWIDTH-duty2counter(steer_value)),  CLOCK_GetFreq(kCLOCK_BusClk)));
+      steerpwmoff();
+    }
+}
 
 /*******************************************************************************
 * Function Name  : PWMConfig
