@@ -450,9 +450,9 @@ static void TX_Mode(void)
 /******************************以下 应用函数*****************************/
  void rf1start(void)
 {
-  static uint32_t times;
-  uint8_t disstr[TX_ADR_WIDTH];
-  uint8_t buf[TX_ADR_WIDTH] = {0x00};
+//  static uint32_t times;
+//  uint8_t disstr[TX_ADR_WIDTH];
+//  uint8_t buf[TX_ADR_WIDTH] = {0x00};
 
   NRF24L01_Init();  
   
@@ -466,25 +466,25 @@ static void TX_Mode(void)
     return;
   }
   RX_Mode();
-  while (1)
-  {  
-    if(NRF24L01_RxPacket(buf) == true)
-    {
-       PRINTF("\r\n RF 接收到数据：\r\n"); 
-        {
-          PRINTF((char const*)buf);
-        }
-    }
-    times++;
-    
-    delay_ms(10);  
-    
-    if((times%100)==0)
-    {
-      sprintf(disstr,"time= %d 秒",times/100);
-      rf1send(disstr);
-    }
-  }
+//  while (1)
+//  {  
+//    if(NRF24L01_RxPacket(buf) == true)
+//    {
+//       PRINTF("\r\n RF 接收到数据：\r\n"); 
+//        {
+//          PRINTF((char const*)buf);
+//        }
+//    }
+//    times++;
+//    
+//    delay_ms(10);  
+//    
+//    if((times%100)==0)
+//    {
+//      sprintf(disstr,"time= %d 秒",times/100);
+//      rf1send(disstr);
+//    }
+//  }
 }
 
 
@@ -497,6 +497,26 @@ void rf1send(uint8_t * str)
       RX_Mode();
 }
 
+uint8_t rf1checkrx(uint8_t *rxbuf)
+{
+  uint8_t buf[TX_ADR_WIDTH] = {0x00};
+
+  if(NRF24L01_RxPacket(buf) == true)
+    {
+      PRINTF("\r\n RF 接收到数据：\r\n"); 
+      {
+        PRINTF((char const*)buf);
+      }
+
+      for(int i=0; i<RX_PLOAD_WIDTH; i++)
+      {
+       *rxbuf++ = buf[i];
+      }                
+      return RX_PLOAD_WIDTH;
+    }
+  return 0;
+     
+}
 
 
 

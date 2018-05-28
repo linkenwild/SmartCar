@@ -15,5 +15,6 @@ bool NRF24L01_RxPacket(uint8_t *rxbuf);                         //接收一个包的数
 
 void rf1send(uint8_t * str);
  void rf1start(void);
+uint8_t rf1checkrx(uint8_t *rxbuf);
 
 #endif
