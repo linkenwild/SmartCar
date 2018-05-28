@@ -151,29 +151,28 @@ void test_ain(void)
 
     PRINTF("²âÊÔ PDB ADC DMA!!!\r\n ");
   Key_init();
+  LED_Init();
   i2c_oled_init();   
-  i2c_oled_init();  
-  
+ OLED_Clear(0);  
     PDB_init();
     AIN0_init();
     AIN1_init();
-    PitConfig(kPIT_Chnl_1, 100);//100us
+    PitConfig(kPIT_Chnl_1, 40);//¶¨Ê±Ê±¼ä£º40us   > = 40
 
-    OLED_Clear(0);
+   
     while(1)
     {
       delay_ms(200);
       get_pdb_adc0_value(ad0value);
       get_pdb_adc1_value(ad1value);
       PRINTF("\r\n");
-      if( 0x00 == GPIO_ReadPinInput(GPIOE, 11U)) //µÚ3¸öµÆÁÁ        
       {
         for(int i=0; i<4; i++)
         {
-          sprintf(str, "%d %d %d %d ", ad0value[0], ad0value[1], ad1value[0], ad1value[1]);
+          sprintf(str, "%d %d %d %d     ", ad0value[0], ad0value[1], ad1value[0], ad1value[1]);
           OLED_ShowString(0,0,8,str);
           
-          sprintf(str, "%d %d %d %d ", ad0value[2], ad0value[3], ad1value[2], ad1value[3]);
+          sprintf(str, "%d %d %d %d     ", ad0value[2], ad0value[3], ad1value[2], ad1value[3]);
           OLED_ShowString(4,0,8,str);
           
         }
@@ -200,6 +199,7 @@ void test_uart(void)
 void test_pwm(void)
 {
     int i = 20, dir = 0;
+    char str[64];
     PWM_Init(PWM1);
     PWM_Init(PWM2);
     PWM_Init(PWM3);
@@ -211,6 +211,8 @@ void test_pwm(void)
     PWMSet(PWM3, 20 );
     PWMSet(PWM4, 20 );
     PWMSet(STEERPWM, 50 );
+    i2c_oled_init();
+    OLED_Clear(0);
     PRINTF("²âÊÔ pwm Êä³öµç»ú ¶æ»úÊ¹ÓÃPIT0!\r\n ");
     while(1)
     {      
@@ -233,6 +235,8 @@ void test_pwm(void)
         }
         if(i>80) dir= 1;
         if(i<20) dir = 0;
+        sprintf (str, "pwm = %d     ", i);
+        OLED_ShowString(2, 20, 8, str);
     }
 }
 //²âÊÔ OLED i2c0 addr:0x3C
@@ -284,14 +288,31 @@ void test_e2prom(void)
 //²âÊÔ mpu6050 i2c0 addr:0x68
 void test_mpu6050(void)
 {
+  int16_t a_data[3];
+  int16_t g_data[3];
+  int16_t temperature;
+  uint8_t str[64];
+  
   LED_Init();
+  i2c_oled_init();   
+  OLED_Clear(0);      
   PRINTF("²âÊÔ MPU6050!\r\n ");
   mpu6050_init();
-    while(1)
+ while(1)
     {      
-        delay();
+        delay_ms(100);
         LEDTog(LED2);
-        mpu6050_getdata();
+        mpu6050_getdata(a_data, g_data, &temperature);
+        
+        sprintf(str, "%d;%d;%d",a_data[0], a_data[1], a_data[2]);
+        OLED_ShowString(0,0,8,str);
+        
+        sprintf(str, "%d;%d;%d",g_data[0], g_data[1], g_data[2]);
+        OLED_ShowString(4,0,8,str);
+        
+        sprintf(str, "t = %d",temperature/100);
+        OLED_ShowString(6,64,8,str);     
+       
     }
 }
 
@@ -301,6 +322,10 @@ void test_mpu6050_angle(void)
   char str[64];
   float angle_temp[3]; //ÓÉ¼ÓËÙ¶È¼ÆËãµÄÇãÐ±½Ç¶È
   float angle_final[3];//×îÖÕÇãÐ±½Ç¶È
+  i2c_oled_init();   
+  OLED_Clear(0); 
+  
+  
   PRINTF("²âÊÔ MPU6050 kalman!\r\n ");
   LED_Init();
   angle_init();
@@ -317,6 +342,8 @@ void test_mpu6050_angle(void)
         
         sprintf(str, " %f-%f  %f-%f  %f-%f\r\n",angle_temp[0],angle_final[0], angle_temp[1],angle_final[1],angle_temp[2],angle_final[2]);
         PRINTF(str);
+        sprintf(str, " %.3f  %.3f  %.3f",angle_temp[0], angle_temp[1],angle_temp[2]);
+        OLED_ShowString(0,0,8,str);
     }
 }
 
@@ -328,6 +355,8 @@ void test_mpu_dmp(void)
   char str[64];
   LED_Init();
   delay();delay();
+  i2c_oled_init();   
+  OLED_Clear(0); 
   PRINTF("²âÊÔ MPU DMP!\r\n ");
   while(mpu_dmp_init())
   {
@@ -339,6 +368,12 @@ void test_mpu_dmp(void)
     {
       sprintf(str, "Pitch = %f   gyro_y=%d , accel_y=%d\r\n", Pitch,  gyro_y, accel_y);
       PRINTF(str);
+      sprintf(str, "Pitch=%.3f  ", Pitch);
+      OLED_ShowString(0,0,8,str);
+      sprintf(str, "gyro_y=%d", gyro_y);
+      OLED_ShowString(2,0,8,str);
+      sprintf(str, "accel_y=%d", accel_y);
+      OLED_ShowString(4,0,8,str);
     }
     else
     {
@@ -381,8 +416,12 @@ void test_speed(void)
  
     while(1)
     {      
-        PRINTF("²âÊÔ speed1 Âö¿í = %d us   ",speed1_get());
-        PRINTF("²âÊÔ speed2 Âö¿í= %dus\r\n ",speed2_get());
+        sprintf(str, "%d  us   ",speed1_get());
+        PRINTF("²âÊÔ speed1 Âö¿í = %s    ",str);
+        OLED_ShowString(1, 20, 8, str);
+        sprintf(str, "%d  us    ",speed2_get());
+        PRINTF("²âÊÔ speed2 Âö¿í = %s    \r\n",str);
+        OLED_ShowString(4, 20, 8, str);
         delay();
         LEDTog(LED1);
     }
@@ -449,25 +488,49 @@ void test_ccd(void)
 //²âÊÔ nrf24l01 
 void test_nrf24l01(void)
 {
+  uint8_t str[64];
+  uint8_t rxbuf[64];
+  int time;
+  
   PRINTF("²âÊÔ nrf24l01!\r\n ");
+  i2c_oled_init(); 
+  delay();delay();delay();
+  OLED_Clear(0);
   rf1start();
+  
+  while(1)
+  {
+    time++;
+    if(rf1checkrx(rxbuf)>0)
+    {
+      sprintf((char*)str, "receive: %s    ",rxbuf);
+      OLED_ShowString(2,0,8,str);       
+    }
+    
+    sprintf((char*)str, "send: %d    ", time);
+    OLED_ShowString(0,0,8,str);  
+    rf1send(str);
+    delay_ms(1000);
+  }
 }
 
 //²âÊÔ hc_sr04 
 void test_hc_sr04(void)
 {
+  uint32_t dis;
   char str[256];
   PRINTF("²âÊÔ hc_sr04!\r\n ");
   LED_Init();
   i2c_oled_init(); 
   delay();delay();delay();
-  fill_picture(0x00);
+  OLED_Clear(0);
   hc_sc04_init();
   while(1)
   {      
       delay();delay();delay();
-      PRINTF("ultrasonic_width = %d.%d cm  \r\n ", ultrasonic_width_get()/1000,ultrasonic_width_get()%1000);//´®¿Ú´òÓ¡³ö¾àÀë
-      sprintf(str, "len=%d.%d cm  ", ultrasonic_width_get()/1000,ultrasonic_width_get()%1000);
-      OLED_ShowString(2, 0, 8, str);
+      dis = ultrasonic_width_get();
+      PRINTF("ultrasonic_width = %d.%d cm  \r\n ", dis/1000,dis%1000);//´®¿Ú´òÓ¡³ö¾àÀë
+      sprintf(str, "len=%d.%d cm  ", dis/1000,dis%1000);
+      OLED_ShowString(2, 0, 8, (uint8_t*)str);
   }
 }
