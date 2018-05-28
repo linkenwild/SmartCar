@@ -699,7 +699,7 @@ int mpu6050_read_gyro(int16_t *gdata)
     uint8_t readBuff[6];
     
     //err = I2C_ReadAccelRegs(BOARD_ACCEL_I2C_BASEADDR, g_accel_addr_found, GYRO_XOUT_H, readBuff, 6);    
-    err = I2C_ReadAccelRegs_Poll(BOARD_ACCEL_I2C_BASEADDR, g_accel_addr_found, ACCEL_XOUT_H, readBuff, 6);    
+    err = I2C_ReadAccelRegs_Poll(BOARD_ACCEL_I2C_BASEADDR, g_accel_addr_found, GYRO_XOUT_H, readBuff, 6);    
     gdata[0] = ((int16_t)(((readBuff[0] * 256U) | readBuff[1]))); 	    
     gdata[1] = ((int16_t)(((readBuff[2] * 256U) | readBuff[3]))); 	    
     gdata[2] = ((int16_t)(((readBuff[4] * 256U) | readBuff[5])));
@@ -754,7 +754,7 @@ void mpu6050_init(void)
 * Output         : advalue
 * Return         : None
 *******************************************************************************/
-void mpu6050_getdata(void)
+void mpu6050_getdata(int16_t* a_data, int16_t* g_data, int16_t* temperature)
 {
         uint8_t status0_value = 0;
         int16_t adata[3];
@@ -774,7 +774,11 @@ void mpu6050_getdata(void)
         temp = mpu6050_read_temperature();
         sprintf(str, "temperature = %d.%d \r\n", temp/100, temp%100);
         PRINTF(str);
-        i2c_bus_delay();       
+        i2c_bus_delay();    
+        
+        *a_data++ = adata[0];*a_data++ = adata[1];*a_data++ = adata[2];
+        *g_data++ = gdata[0];*g_data++ = gdata[1];*g_data++ = gdata[2];
+        *temperature = temp;
 }
 
 /*DMPµ÷ÓÃº¯Êý*/
