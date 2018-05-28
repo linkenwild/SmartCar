@@ -6,10 +6,9 @@ Version:         1.0
 History:         
       <author>  <time>   <version >   <desc> 
       Sundm    18/05/30     1.0     文件创建  
-  *1. 采用PIT2 定时器触发采样时间 9.604 us 触发ADC
-  *2. ADC单次转换后，触发DMA0-ch1 ,将通道数据 搬到 ADCx_SC1A 
-  *3. DMA0-ch1 ,将通道数据 搬到 ADCx_SC1A ,初始化后立刻执行，后地址加1
-  *4. 或者将第3步修改为 产生中断，在中断服务中切换通道地址
+  *1. 采用PIT2 定时器中断触发PDB0，定时周期 40us 
+  *2. PDB0触发AD转换，产生中断，时间周期20us
+  *3. ADC单次转换后（时间 < 5us ），触发中断，更换通道
   *          SmartCar Board Pin assignment
   *          =============================
   *          +-----------------------------------------------------------+
@@ -171,10 +170,10 @@ void PDB_init(void)
     PDB_Init(AIN_PDB_BASE, &pdbConfigStruct);
 
     /* Configure the delay interrupt. */
-    PDB_SetModulusValue(AIN_PDB_BASE, 1000U);// 1 周期 20us
+    PDB_SetModulusValue(AIN_PDB_BASE, 500U);// PDB 周期 10us
 
     /* The available delay value is less than or equal to the modulus value. */
-    PDB_SetCounterDelayValue(AIN_PDB_BASE, 1000U);
+    PDB_SetCounterDelayValue(AIN_PDB_BASE, 500U);
     PDB_EnableInterrupts(AIN_PDB_BASE, kPDB_DelayInterruptEnable);
 
     /* Configure the ADC0 Pre-Trigger. */
@@ -182,7 +181,7 @@ void PDB_init(void)
     pdbAdcPreTriggerConfigStruct.enableOutputMask = 1U << AIN_PDB_ADC_PRETRIGGER_CHANNEL;
     pdbAdcPreTriggerConfigStruct.enableBackToBackOperationMask = 0U;
     PDB_SetADCPreTriggerConfig(AIN_PDB_BASE, AIN_PDB_ADC_TRIGGER_CHANNEL, &pdbAdcPreTriggerConfigStruct);//ADC0
-    PDB_SetADCPreTriggerDelayValue(AIN_PDB_BASE, AIN_PDB_ADC_TRIGGER_CHANNEL, AIN_PDB_ADC_PRETRIGGER_CHANNEL, 200U);
+    PDB_SetADCPreTriggerDelayValue(AIN_PDB_BASE, AIN_PDB_ADC_TRIGGER_CHANNEL, AIN_PDB_ADC_PRETRIGGER_CHANNEL, 10U);
     /* The available Pre-Trigger delay value is less than or equal to the modulus value. */
 
     /* Configure the ADC1 Pre-Trigger. */
@@ -190,7 +189,7 @@ void PDB_init(void)
     pdbAdcPreTriggerConfigStruct.enableOutputMask = 1U << AIN_PDB_ADC_PRETRIGGER_CHANNEL;
     pdbAdcPreTriggerConfigStruct.enableBackToBackOperationMask = 0U;
     PDB_SetADCPreTriggerConfig(AIN_PDB_BASE, AIN_PDB_ADC_TRIGGER_CHANNEL + 1, &pdbAdcPreTriggerConfigStruct);//ADC1
-    PDB_SetADCPreTriggerDelayValue(AIN_PDB_BASE, AIN_PDB_ADC_TRIGGER_CHANNEL + 1, AIN_PDB_ADC_PRETRIGGER_CHANNEL, 200U);//ADC1
+    PDB_SetADCPreTriggerDelayValue(AIN_PDB_BASE, AIN_PDB_ADC_TRIGGER_CHANNEL + 1, AIN_PDB_ADC_PRETRIGGER_CHANNEL, 10U);//ADC1
     /* The available Pre-Trigger delay value is less than or equal to the modulus value. */
 
     
@@ -217,7 +216,7 @@ void AIN_PDB_IRQ_HANDLER(void)
  ******************************************************************************/
 void PIT1_IRQHandler(void)
 {
-  /* Clear interrupt flag.*/
+    /* Clear interrupt flag.*/
     PIT_ClearStatusFlags(PIT, kPIT_Chnl_1 , kPIT_TimerFlag);
     /*PDB软件触发 */
     PDB_DoSoftwareTrigger(PDB0);
